@@ -114,8 +114,10 @@
 
     habitForm.addEventListener('submit', function(e) {
       e.preventDefault();
-      const habit = habitInput.value.trim();
+      let habit = habitInput.value.trim();
       if (habit) {
+        // Format: Capitalize first letter, rest lowercase
+        habit = habit.charAt(0).toUpperCase() + habit.slice(1).toLowerCase();
         habits.push(habit);
         lastAddedHabit = habit;
         saveHabits();
