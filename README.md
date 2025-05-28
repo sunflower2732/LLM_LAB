@@ -14,11 +14,11 @@ Acceptance Criteria:
  The system must confirm the action with a message afterward.
  All data must be saved correctly and remain accessible afterward.
 
-Modify the code to add a button in the main (index) to connect index with add habits
+* Modify the code to add a button in the main (index) to connect index with add habits
 
-I want you to add code such that the habits introduced are stored in a csv.
+* I want you to add code such that the habits introduced are stored in a csv.
 
-No, I don't want the user to download a csv, but the web to have a database to keep track of the habits of the user. --> Response: When a user adds a habit, it is stored in localStorage
+* No, I don't want the user to download a csv, but the web to have a database to keep track of the habits of the user. --> Response: When a user adds a habit, it is stored in localStorage
 
 ### User story 2
 
@@ -49,7 +49,7 @@ Acceptance Criteria:
 
 ### User story 4
 
-* create a separate html named deleteHabits that implements this third functionality: As a user, I want to delete old habits to keep only the relevant ones.
+* Create a separate html named deleteHabits that implements this third functionality: As a user, I want to delete old habits to keep only the relevant ones.
 Acceptance Criteria:
  The functionality must be available in the main interface.
  The user must be able to undo the action if necessary.
@@ -57,6 +57,19 @@ Acceptance Criteria:
  All data must be saved correctly and remain accessible afterward.
 
 ## Screenshots of the final product
+![image](https://github.com/user-attachments/assets/e3b8713a-8736-42ba-8e98-c3660ec0607d)
+
+![image](https://github.com/user-attachments/assets/daac7167-dbf0-4bac-897c-6ed58c39e23b)
+
+![image](https://github.com/user-attachments/assets/2da6455a-c70f-470f-93ed-4f8b84c9eda0)
+
+![image](https://github.com/user-attachments/assets/366835a2-97e2-4f08-a112-256950841d37)
+
+![image](https://github.com/user-attachments/assets/454101e2-062e-4ca4-8a91-4cbd81b72893)
+
+![image](https://github.com/user-attachments/assets/01dfaebc-85e3-4646-9532-c91309d94fd7)
+
+![image](https://github.com/user-attachments/assets/2ff49762-5871-40aa-b704-40941e2897bb)
 
 
 ## Lessons learned on the use of Copilot
