@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Compliance Calendar</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6fa;
+      min-height: 100vh;
+      padding: 2rem;
+    }
+    .container {
+      max-width: 700px;
+      margin: 0 auto;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      padding: 2rem;
+    }
+    h2 {
+      color: #2d3748;
+      text-align: center;
+    }
+    .calendar {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 0.5rem;
+      margin-top: 2rem;
+    }
+    .day {
+      background: #edf2f7;
+      border-radius: 4px;
+      padding: 0.5rem 0.2rem;
+      min-height: 60px;
+      text-align: center;
+      font-size: 0.95rem;
+      position: relative;
+      border: 1px solid #e2e8f0;
+    }
+    .day.completed {
+      background: #c6f6d5;
+      border: 2px solid #38a169;
+    }
+    .day.today {
+      border: 2px solid #3182ce;
+    }
+    .day .count {
+      display: block;
+      font-size: 0.8rem;
+      color: #38a169;
+      margin-top: 0.2rem;
+    }
+    .weekdays {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 0.5rem;
+      margin-bottom: 0.5rem;
+      font-weight: bold;
+      color: #4a5568;
+      text-align: center;
+    }
+    .message {
+      margin-top: 1rem;
+      color: #38a169;
+      text-align: center;
+      font-weight: bold;
+    }
+    button.menu {
+      position: absolute;
+      top: 1.5rem;
+      left: 1.5rem;
+      padding: 0.5rem 1.2rem;
+      background: #4a5568;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+    .habit-details-list {
+      list-style: none;
+      padding: 0;
+      margin: 0.5em 0 0 0;
+      text-align: left;
+    }
+    .habit-details-list li {
+      display: flex;
+      align-items: center;
+      margin-bottom: 0.5em;
+    }
+    .habit-details-btn {
+      background: #3182ce;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      padding: 0.3rem 1rem;
+      margin-right: 1em;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+    .habit-details-name {
+      color: #2d3748;
+      font-size: 1rem;
+      font-weight: 500;
+    }
+  </style>
+</head>
+<body>
+  <button onclick="window.location.href='index.html'" class="menu">Menu</button>
+  <div class="container">
+    <h2>Compliance Calendar</h2>
+    <div class="weekdays">
+      <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
+    </div>
+    <div class="calendar" id="calendar"></div>
+    <div class="message" id="message"></div>
+    <div class="habit-details" id="habitDetails" style="display:none;"></div>
+  </div>
+  <script>
+    // Get completions from localStorage
+    function getCompletions() {
+      return JSON.parse(localStorage.getItem('completions') || '{}');
+    }
+    function getHabits() {
+      return JSON.parse(localStorage.getItem('habits') || '[]');
+    }
+    // Get current month and year
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = today.getMonth();
+    const calendarDiv = document.getElementById('calendar');
+    const message = document.getElementById('message');
+    // Get first day of month
+    const firstDay = new Date(year, month, 1);
+    const startDay = firstDay.getDay();
+    // Get number of days in month
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    // Get completions
+    const completions = getCompletions();
+    const habits = getHabits();
+    // Render calendar
+    function renderCalendar() {
+      calendarDiv.innerHTML = '';
+      // Fill empty days before first day
+      for (let i = 0; i < startDay; i++) {
+        const empty = document.createElement('div');
+        empty.className = 'day';
+        calendarDiv.appendChild(empty);
+      }
+      for (let d = 1; d <= daysInMonth; d++) {
+        const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+        const dayDiv = document.createElement('div');
+        dayDiv.className = 'day';
+        if (dateStr === today.toISOString().slice(0,10)) dayDiv.classList.add('today');
+        const completed = completions[dateStr] || [];
+        if (completed.length > 0) dayDiv.classList.add('completed');
+        dayDiv.innerHTML = `<div>${d}</div>`;
+        if (completed.length > 0) {
+          dayDiv.innerHTML += `<span class="count">${completed.length}/${habits.length} done</span>`;
+        }
+        dayDiv.style.cursor = 'pointer';
+        dayDiv.onclick = function() {
+          showHabitDetails(dateStr, completed);
+        };
+        calendarDiv.appendChild(dayDiv);
+      }
+    }
+    function showHabitDetails(dateStr, completed) {
+      const detailsDiv = document.getElementById('habitDetails');
+      if (!completed.length) {
+        detailsDiv.style.display = 'block';
+        detailsDiv.innerHTML = `<span>No habits completed on ${dateStr}.</span>`;
+        return;
+      }
+      let html = `<strong>Habits completed on ${dateStr}:</strong><ul class='habit-details-list'>`;
+      completed.forEach(habit => {
+        html += `<li><button class='habit-details-btn' disabled>✔</button><span class='habit-details-name'>${habit}</span></li>`;
+      });
+      html += '</ul>';
+      detailsDiv.style.display = 'block';
+      detailsDiv.innerHTML = html;
+    }
+    renderCalendar();
+    document.getElementById('message').textContent = '';
+  </script>
+</body>
+</html>

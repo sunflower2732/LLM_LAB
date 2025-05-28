@@ -93,15 +93,16 @@
     function getHabits() {
       return JSON.parse(localStorage.getItem('habits') || '[]');
     }
-    function getCompletions() {
+    function getCompletions(date) {
       // Store by date (YYYY-MM-DD)
-      const today = new Date().toISOString().slice(0,10);
       const completions = JSON.parse(localStorage.getItem('completions') || '{}');
+      if (date) return completions[date] || [];
+      const today = new Date().toISOString().slice(0,10);
       return completions[today] || [];
     }
-    function setCompletions(completedHabits) {
-      const today = new Date().toISOString().slice(0,10);
+    function setCompletions(completedHabits, date) {
       const completions = JSON.parse(localStorage.getItem('completions') || '{}');
+      const today = date || new Date().toISOString().slice(0,10);
       completions[today] = completedHabits;
       localStorage.setItem('completions', JSON.stringify(completions));
     }
@@ -124,10 +125,10 @@
         if (completed.includes(habit)) {
           btn.textContent = 'Undo completed';
           btn.onclick = () => {
-            // Undo completion of this habit
+            // Undo completion of this habit for today
             const newCompleted = completed.filter(h => h !== habit);
             setCompletions(newCompleted);
-            lastAction = { type: 'undo-complete', habit };
+            lastAction = { type: 'undo-complete', habit, date: new Date().toISOString().slice(0,10) };
             renderHabits();
             msg.textContent = 'Habit completion undone.';
             undoBtn.style.display = '';
@@ -137,7 +138,7 @@
           btn.onclick = () => {
             completed.push(habit);
             setCompletions(completed);
-            lastAction = { type: 'complete', habit };
+            lastAction = { type: 'complete', habit, date: new Date().toISOString().slice(0,10) };
             renderHabits();
             msg.textContent = 'Habit marked as completed!';
             undoBtn.style.display = '';
@@ -149,17 +150,17 @@
     }
     undoBtn.onclick = () => {
       if (lastAction && lastAction.type === 'complete') {
-        let completed = getCompletions();
+        let completed = getCompletions(lastAction.date);
         completed = completed.filter(h => h !== lastAction.habit);
-        setCompletions(completed);
+        setCompletions(completed, lastAction.date);
         renderHabits();
         msg.textContent = 'Last action undone.';
         undoBtn.style.display = 'none';
         lastAction = null;
       } else if (lastAction && lastAction.type === 'undo-complete') {
-        let completed = getCompletions();
+        let completed = getCompletions(lastAction.date);
         completed.push(lastAction.habit);
-        setCompletions(completed);
+        setCompletions(completed, lastAction.date);
         renderHabits();
         msg.textContent = 'Habit completion restored.';
         undoBtn.style.display = 'none';
